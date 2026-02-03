@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RemakeFFA Network</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Orbitron',sans-serif;}
+body{background:radial-gradient(circle at top,#0a1cff,#020617);color:white;overflow-x:hidden;position:relative;}
+:root{--blue:#1e3cff;--red:#ff2b2b;--glow-blue:0 0 30px #1e3cff;--glow-red:0 0 30px #ff2b2b;}
+.app{display:flex;height:100vh;position:relative;z-index:1;}
+.sidebar{width:260px;background:linear-gradient(180deg,#0015ff,#a00000);padding:25px;box-shadow:5px 0 25px rgba(0,0,0,.7);border-radius:20px 0 0 20px;position:relative;z-index:2;}
+.logo{text-align:center;margin-bottom:30px;}
+.logo img{width:100%;}
+.nav button{
+    width:100%;
+    padding:15px;
+    margin-bottom:15px;
+    background:#020617;
+    border:2px solid var(--red);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:var(--glow-blue);
+    border-radius:20px;
+}
+.nav button:hover{background:var(--red);box-shadow:var(--glow-red);}
+.main{
+    flex:1;
+    padding:40px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:40px;
+    background:#2e2e2e;
+    border-left:2px solid var(--blue);
+    border-radius:0 20px 20px 0;
+    position:relative;
+    z-index:2;
+}
+/* Sections */
+.section{display:none;}
+.section.active{display:block;}
+/* Hero Banner */
+.hero{
+    background:linear-gradient(90deg,#1e3cff,#ff2b2b);
+    padding:30px;
+    text-align:center;
+    border-radius:20px;
+    box-shadow:var(--glow-blue);
+    position:relative;
+    overflow:hidden;
+}
+.hero h1{
+    font-size:48px;
+    color:white;
+    text-shadow:0 0 20px cyan;
+    animation: glow 2s infinite alternate;
+    position:relative;
+    z-index:2;
+}
+@keyframes glow{0%{text-shadow:0 0 10px cyan;}100%{text-shadow:0 0 40px cyan,0 0 80px #1e3cff;}}
+
+/* Particle animation */
+.particle{
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:#1e3cff;
+    border-radius:50%;
+    opacity:0.7;
+    animation: float linear infinite;
+}
+@keyframes float{
+    0%{transform:translateY(0px) translateX(0px);}
+    50%{transform:translateY(-50px) translateX(20px);}
+    100%{transform:translateY(0px) translateX(-20px);}
+}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;margin-top:30px;}
+.stat{background:#020617;border:2px solid var(--red);padding:25px;text-align:center;box-shadow:var(--glow-blue);border-radius:20px;transition:0.3s;}
+.stat h2{font-size:36px;color:cyan;animation: countUp 2s;}
+.stat:hover{box-shadow:0 0 50px cyan;}
+@keyframes countUp{0%{color:#00ffff;}100%{color:cyan;}}
+
+/* Progress Bar */
+.progress-container{background:#111;border:2px solid cyan;border-radius:20px;overflow:hidden;margin-top:10px;}
+.progress-bar{height:20px;background:#1e3cff;width:0%;border-radius:20px;transition:1s;}
+
+/* Shop Ranks */
+.shop{display:grid;grid-template-columns:repeat(3,1fr);gap:35px;align-items:start;}
+.rank{background:#020617;border:2px solid var(--red);padding:25px;text-align:center;box-shadow:var(--glow-blue);border-radius:20px;transition:0.3s;}
+.rank h2{color:cyan;font-size:24px;letter-spacing:1px;text-shadow:0 0 10px cyan;}
+.rank:hover{box-shadow:0 0 50px cyan;}
+.rank ul{list-style:none;margin:20px 0;}
+.rank li{margin:8px 0;}
+.price{color:var(--red);font-size:22px;margin-bottom:10px;}
+.rank input{width:100%;padding:10px;margin-bottom:10px;background:black;border:1px solid cyan;color:white;border-radius:15px;}
+.buy{display:inline-block;padding:12px 25px;background:var(--blue);border:2px solid var(--red);color:white;text-decoration:none;box-shadow:var(--glow-blue);border-radius:20px;transition:0.3s;}
+.buy:hover{background:var(--red);box-shadow:var(--glow-red);}
+
+/* Admin & Storage */
+.admin, .storage, .legal{background:#020617;border:2px solid var(--red);padding:30px;box-shadow:var(--glow-red);border-radius:20px;}
+.log, .storage-log{
+    background:#111;
+    padding:15px;
+    margin-top:10px;
+    border-left:4px solid cyan;
+    border-radius:10px;
+    opacity:0;
+    transform:translateY(-20px);
+    transition:all 0.5s ease;
+}
+/* Highlight flash for new entries */
+.flash{
+    animation: flashAnim 0.6s;
+}
+@keyframes flashAnim{
+    0%{background:#00ffff; color:black;}
+    100%{background:#111; color:white;}
+}
+
+/* Filter Inputs */
+.filter-container{margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;}
+.filter-container input{flex:1;padding:10px;border-radius:15px;border:1px solid cyan;background:#020617;color:white;}
+
+/* Action Boxes */
+.action-boxes{display:flex;gap:30px;flex-wrap:wrap;margin-top:40px;justify-content:center;}
+.action-box{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+  border-radius:20px;
+  cursor:pointer;
+  transition:0.3s;
+  box-shadow:0 0 20px;
+  width:320px;
+  min-height:140px;
+}
+.action-box h2{margin-bottom:10px;font-size:24px;}
+.action-box p{font-size:14px;}
+/* Support = rot */
+.action-support-long{
+  background:#ff2b2b;
+  border:2px solid #ff4c4c;
+  color:white;
+  box-shadow:0 0 20px #ff4c4c;
+}
+/* Feedback = blau */
+.action-feedback-long{
+  background:#1e3cff;
+  border:2px solid #4c6cff;
+  color:white;
+  box-shadow:0 0 20px #4c6cff;
+}
+.action-box:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+<div id="particles" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></div>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="logo"><img src="logo.png"></div>
+    <div class="nav">
+      <button onclick="show('home')">Start Menu</button>
+      <button onclick="show('shop')">Shop</button>
+      <button onclick="enterSecurity()">Security</button>
+      <button id="btn-admin" style="display:none;" onclick="show('admin')">Owner Panel</button>
+      <button id="btn-storage" style="display:none;" onclick="show('storage')">Storage</button>
+      <button onclick="show('legal')">Legal</button>
+    </div>
+    <p style="margin-top:30px;text-align:center">IP:<br><b>RemakeFFA.xyz</b></p>
+  </div>
+
+  <div class="main">
+    <!-- HOME -->
+    <div id="home" class="section active">
+      <div class="hero"><h1>Welcome to RemakeFFA</h1></div>
+      <div class="stats">
+        <div class="stat"><h2 id="sold">0</h2><p>Products Sold</p><div class="progress-container"><div id="sold-bar" class="progress-bar"></div></div></div>
+        <div class="stat"><h2 id="online">0</h2><p>Players Online</p><div class="progress-container"><div id="online-bar" class="progress-bar"></div></div></div>
+        <div class="stat"><h2 id="discord">—</h2><p>Discord Members (Live)</p></div>
+      </div>
+
+      <!-- Action Boxes -->
+      <div class="action-boxes">
+        <div class="action-box action-support-long" onclick="window.open('https://discord.gg/YOUR_SERVER_LINK','_blank')">
+          <h2>Support?</h2>
+          <p>Join our Discord, open a ticket and write your in-game name!</p>
+        </div>
+        <div class="action-box action-feedback-long" onclick="window.open('https://discord.gg/YOUR_SERVER_LINK','_blank')">
+          <h2>Feedback?</h2>
+          <p>Join our Discord and give feedback!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOP -->
+    <div id="shop" class="section">
+      <div class="shop">
+        <div class="rank"><h2>Supporter</h2><ul><li>Support the server</li></ul><div class="price">€1.99</div><input id="u1" placeholder="Minecraft Username"><a class="buy" onclick="buy('Supporter',1.99,'u1')">BUY NOW</a></div>
+        <div class="rank"><h2>Juggernaut Token</h2><ul><li>Special Token</li></ul><div class="price">€2.99</div><input id="u2" placeholder="Minecraft Username"><a class="buy" onclick="buy('Juggernaut Token',2.99,'u2')">BUY NOW</a></div>
+        <div class="rank"><h2>VIP</h2><ul><li>VIP Rank</li></ul><div class="price">€3.99</div><input id="u3" placeholder="Minecraft Username"><a class="buy" onclick="buy('VIP',3.99,'u3')">BUY NOW</a></div>
+        <div class="rank"><h2>Remake+</h2><ul><li>Premium Rank</li></ul><div class="price">€4.99</div><input id="u4" placeholder="Minecraft Username"><a class="buy" onclick="buy('Remake+',4.99,'u4')">BUY NOW</a></div>
+        <div class="rank"><h2>Mace</h2><ul><li>Weapon Item</li></ul><div class="price">€5.99</div><input id="u5" placeholder="Minecraft Username"><a class="buy" onclick="buy('Mace',5.99,'u5')">BUY NOW</a></div>
+        <div class="rank"><h2>MVP</h2><ul><li>Best Rank</li></ul><div class="price">€10.99</div><input id="u6" placeholder="Minecraft Username"><a class="buy" onclick="buy('MVP',10.99,'u6')">BUY NOW</a></div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="admin" class="section">
+      <div class="admin"><h2>Owner Purchase Log</h2><div id="logs"></div></div>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="storage" class="section">
+      <div class="storage">
+        <h2>Storage of Purchases</h2>
+        <div class="filter-container">
+          <input type="text" id="filter-player" placeholder="Filter by player" oninput="applyFilter()">
+          <input type="text" id="filter-rank" placeholder="Filter by rank" oninput="applyFilter()">
+        </div>
+        <div id="storage-logs"></div>
+      </div>
+    </div>
+
+    <!-- LEGAL -->
+    <div id="legal" class="section">
+      <div class="legal">
+        <h2>Legal</h2>
+        <p>We do not provide any guarantee that the products in the shop are permanently up-to-date. For precise or further information, please open a ticket in our Discord support.</p>
+        <p>We do not guarantee that the command /ranks is available on every server.</p>
+        <p>We strive to respond to inquiries promptly. Online store inquiries will be handled within 72 hours, provided they are submitted in the correct category. Mis-categorized inquiries may not be processed within this timeframe.</p>
+        <p>With the start of a new season, we reserve the right not to provide content from previous seasons again. There is no entitlement to transfer or replacement.</p>
+        <p>In the store, the term 'permanent' is often used. This means the product remains available for the duration of the network.</p>
+        <p>For questions about Tebex, please visit the Impressum, Privacy Policy, and Terms & Conditions pages.</p>
+        <p>Last updated: 30.9.2025</p>
+        <p>Contact or Discord: <a href="https://discord.gg/qqpSBT2D2q" target="_blank" style="color:#1e3cff;">https://discord.gg/qqpSBT2D2q</a></p>
+        <p>Reservation of changes: We reserve the right to adjust these notes at any time.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PASSWORD="1768";
+
+// Security
+function enterSecurity(){
+  const pass = prompt("Enter password:");
+  if(pass!==PASSWORD){alert("Wrong password!"); return;}
+  document.getElementById("btn-admin").style.display="block";
+  document.getElementById("btn-storage").style.display="block";
+  alert("Access granted!");
+}
+
+// Sections
+function show(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Buy
+function buy(rank,price,inputId){
+  const user=document.getElementById(inputId).value.trim();
+  if(!user){alert('Enter Minecraft username');return;}
+  logPurchase(user,rank,price);
+  window.open(`https://www.paypal.com/paypalme/MonikaG70/${price}`,'_blank');
+}
+
+// Logs
+function logPurchase(user,rank,price){
+  const logs=document.getElementById('logs');
+  const storageLogs=document.getElementById('storage-logs');
+
+  const div=document.createElement('div');
+  div.className='log flash';
+  div.innerText=`${new Date().toLocaleString()} | ${user} bought ${rank} (€${price})`;
+  logs.prepend(div);
+  setTimeout(()=>div.classList.remove('flash'),600);
+
+  const sdiv=document.createElement('div');
+  sdiv.className='storage-log flash';
+  sdiv.innerText=`${new Date().toLocaleString()} | ${user} bought ${rank} (€${price})`;
+  storageLogs.prepend(sdiv);
+  setTimeout(()=>sdiv.classList.remove('flash'),600);
+}
+
+// Live Stats Animation
+function animateProgress(id, value){
+  document.getElementById(id).style.width=value+"%";
+}
+
+setInterval(()=>{
+  const online=Math.floor(Math.random()*60)+1;
+  document.getElementById('online').innerText=online;
+  animateProgress('online-bar', Math.min(100,(online/60*100)));
+
+  const sold=document.querySelectorAll('.log').length;
+  document.getElementById('sold').innerText=sold;
+  animateProgress('sold-bar', Math.min(100,(sold/20*100)));
+},3000);
+
+// Particle creation
+for(let i=0;i<50;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.top=Math.random()*window.innerHeight+'px';
+  p.style.left=Math.random()*window.innerWidth+'px';
+  p.style.animationDuration=(3+Math.random()*5)+'s';
+  document.getElementById('particles').appendChild(p);
+}
+
+// Filter function
+function applyFilter(){
+  const playerFilter=document.getElementById('filter-player').value.toLowerCase();
+  const rankFilter=document.getElementById('filter-rank').value.toLowerCase();
+  document.querySelectorAll('.storage-log').forEach(log=>{
+    const text=log.innerText.toLowerCase();
+    if(text.includes(playerFilter) && text.includes(rankFilter)){
+      log.style.display='block';
+    } else{
+      log.style.display='none';
+    }
+  });
+}
+</script>
+</body>
+</html>
